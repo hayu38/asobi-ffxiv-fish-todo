@@ -23,7 +23,7 @@
 </head>
 
 <body>
-  <div class="container" id="fish-list">
+  <div class="container" id="fish-list"  v-cloak>
     <nav class="navbar navbar-inverse">
       <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
@@ -68,12 +68,12 @@
             <label for="howto">釣り方</label>
             <input type="text" class="form-control" id="howto" placeholder="サンドストームライダー（サンドリーチ）で泳がせ釣り" v-model="addFishData.howto">
           </div>
-          <div class="btn btn-primary" v-on:click="addFish">追加</div>
+          <div class="btn" v-on:click="addFish" v-bind:class="addBtnClass">{{ errorMassage }}</div>
         </form>
       </div>
     </div>
 
-    <div class="row" v-cloak>
+    <div class="row">
       <div class="col-md-4" style="position: relative;" v-for="fish in fishes">
         <div class="panel" v-bind:class="[fish.done ? 'panel-danger' : 'panel-primary']">
           <div class="panel-heading">

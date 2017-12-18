@@ -22,7 +22,7 @@ class Fish {
 }
 
 //ローカルストレージから魚リストを取得
-let getFishListLocalStorage = function() {
+let getFishListLocalStorage = () => {
   let fishList = [];
   if (localStorage.getItem("fishList") != null)
   {
@@ -34,7 +34,7 @@ let getFishListLocalStorage = function() {
 }
 
 //魚リストをローカルストレージに保存する
-let setFishListLocalStorage = function(fishList){
+let setFishListLocalStorage = (fishList) => {
   let jsonData = JSON.stringify(fishList);
   localStorage.setItem("fishList", jsonData);
 }
@@ -43,6 +43,19 @@ let setFishListLocalStorage = function(fishList){
 let exampleFishList = [new Fish('ヘリコプリオン', 'クォーリーミル', 'ウルズの恵み', '雷、雷雨', 'なし', 'グローワーム→トップウォーターフロッグ', '雷、雷雨時にグローワームでオオタキタロを釣り上げ、「漁師の直感（１分）」にエサをトップウォーターフロッグに変更して狙う'),
                        new Fish('ナミタロ', '南ザナラーン', 'ザゴリー砂海', '曇／霧→灼熱波', '8:00〜19:59', 'サンドリーチ', 'サンドストームライダー（サンドリーチ）で泳がせ釣り'),
                        new Fish('クノ・ザ・キラー', 'モードゥナ', '唄う裂谷北部', '妖霧', '8:00〜17:59', 'ハニーワーム', '銀魚（ハニーワーム）→金魚→ジャノを釣り上げ「漁師の直感（２４分）」発動後、銀魚（ハニーワーム）→銀魚→アサシンベタからの泳がせ釣り。漁師の直感後は天気が関係ないため、諦めない。'),];
+
+let checkError = (fish) => {
+  if (fish.name == '') 
+    return true;
+  if (fish.telepoArea == '')
+    return true;
+  if (fish.area == '')
+    return true;
+  if (fish.bait == '')
+    return true;
+
+  return false;
+}
 
 //Vueインスタンスの作成
 let vm = new Vue({
@@ -53,16 +66,28 @@ let vm = new Vue({
       name: '', telepoArea: '', area: '',
       weather: '', time: '', bait: '', howto: ''
     },
+    inputBtnMessage: '',
+    errorMassage: '',
+  },
+  computed: {
+    addBtnClass: function() {
+      let isError = checkError(this.addFishData);
+      this.errorMassage = isError? '未入力項目があります': '追加する';
+      return isError? 'btn-danger': 'btn-primary';
+    }
   },
   methods: {
     addFish: function() {
+      if (checkError(this.addFishData))
+        return;
+
       let newFishData = new Fish(this.addFishData.name, 
                                   this.addFishData.telepoArea,
                                   this.addFishData.area,
                                   this.addFishData.weather == '' ? 'なし' : this.addFishData.weather,
                                   this.addFishData.time == ''? 'なし' : this.addFishData.time,
                                   this.addFishData.bait,
-                                  this.addFishData.howto);
+                                  this.addFishData.howto == ''? '特になし' : this.addFishData.howto);
       this.fishes.push(newFishData);
 
       setFishListLocalStorage(this.fishes);
